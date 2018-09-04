@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import logo from "../img/header-logo.png";
 import "../css/style-product-card.css";
 import lady_shoes_1 from '../img/product-list__pic_1.jpg';
-import MainPage from './main-page.js';
+import MainPage from './MainPage';
 import ProductCard from './ProductCard.js';
 import Sections from './Sections.js';
 import Catalogue from './Catalogue.js';
@@ -167,6 +167,7 @@ class Header extends React.Component {
                   <i className="fa fa-heart-o" aria-hidden="true"></i>Избранное</NavLink>
                 <a href="#">Выйти</a>
               </div>
+              
               <div className="hidden-panel__basket basket-dropped">
                 <div className="product-list__item">
                   <div className="product-list__product">
@@ -299,6 +300,32 @@ class Header extends React.Component {
          </div>
       </Router>
   	);
+  }
+}
+
+class BasketPanel extends React.Component {
+  render() {
+    return (
+      <div class="hidden-panel__basket basket-dropped hidden-panel__basket_visible">
+        <div class="basket-dropped__title">В вашей корзине:</div>
+        <div class="basket-dropped__product-list product-list">
+          <div class="product-list__item">
+            <a class="product-list__pic">
+              <img src="img/product-list__pic_1.jpg" alt="product" /> 
+            </a>
+            <a href="#" class="product-list__product">Ботинки женские, Baldinini</a>
+            <div class="product-list__fill"></div>
+            <div class="product-list__price">12 360
+              <i class="fa fa-rub" aria-hidden="true"></i>
+            </div>
+            <div class="product-list__delete">
+              <i class="fa fa-times" aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+        <a class="basket-dropped__order-button" href="order.html">Оформить заказ</a>
+      </div>
+    )
   }
 }
 

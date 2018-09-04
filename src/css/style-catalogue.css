@@ -444,7 +444,7 @@ span.producer {
   color: #000000;
 }
 
-li.active {
+.sidebar li.active {
   display: inline-block;
   padding: 5px;
   background: #D4D4D4;
@@ -934,6 +934,7 @@ span.color-name:hover {
 
 .sidebar__heel-height ul {
   height: 95px;
+  overflow: auto;
 }
 
 .sidebar__heel-height .opener-up {

@@ -182,20 +182,20 @@ class NewDeals extends React.Component {
 
 	loadFilters() {
 		fetch(`https://neto-api.herokuapp.com/bosa-noga/filters`)
-.then((res) => {
-	if (200 > res.status || res.status > 300) {
-		console.log(`Ответ ${res.error}`);
-	} else {
-		return res;
-		}
-})
-.then((res) => res.json())
-.then((info) => {
-	console.log(info);
-})	
-.catch((error) => {
-	 console.log(`${error.message}`);
-});
+		.then((res) => {
+			if (200 > res.status || res.status > 300) {
+				console.log(`Ответ ${res.error}`);
+			} else {
+				return res;
+			}
+		})
+		.then((res) => res.json())
+		.then((info) => {
+			console.log(info);
+		})	
+		.catch((error) => {
+			console.log(`${error.message}`);
+		});
 	}
 
 	loadFeatured() {

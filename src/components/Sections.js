@@ -5,6 +5,8 @@ import slide180 from '../img/slider180deg.jpeg';
 import slider from '../js/slider.js';
 import NewDeals from './NewDeals';
 
+import NewProducts from './new_deals';
+
 let sliderPictures;
 let sliderImage = [];
 let buttons = [];
@@ -44,7 +46,7 @@ class Sections extends React.Component {
 	      </div>
 	    </section>
 
-	   <NewDeals/>
+			<NewProducts />
 
 	    <section className="sales-and-news wave-bottom">
 	      <h2 className="h2">акции и новости</h2>
