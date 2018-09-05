@@ -969,6 +969,19 @@ span.color-name:hover {
   background-position: -54px -153px;
 }
 
+.sidebar__brand ul {
+  width: 240px;
+  height: 143px;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  overflow: auto;
+
+}
+
+.sidebar__brand ul li {
+  padding-top: 12px;
+}
+
 /*Сезон*/
 .sidebar__season h3 {
   padding-top: 24px;

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import MainPage from './MainPage.js';
 
-class App extends Component {
+export default class App extends Component {
   render() {
     return (
     	<div>
@@ -11,5 +11,3 @@ class App extends Component {
     );
   }
 }
-
-export default App;

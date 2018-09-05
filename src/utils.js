@@ -32,6 +32,17 @@ export function shiftBy(arr, step) {
     return copy
 }
 
+export function declensionOfNumber(n, titles) {  
+    return titles[(n%10 == 1 && n%100 !== 11 ? 0 : n%10 >= 2 && n%10 <= 4 && (n%100 <10 || n%100 >= 20) ? 1 : 2)];
+}
+
+export function encodeObject(obj) {
+    const str = JSON.stringify(obj)
+    const base64 = btoa(encodeURIComponent(str))
+
+    return base64
+}
+
 export function getOrderTotal(items) {
     return items.reduce((sum, cur) => {
         sum += cur.price * cur.quantity;

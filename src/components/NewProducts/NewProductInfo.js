@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default function NewProductInfo(props) {
     return (
         <div className="new-deals__product-info">

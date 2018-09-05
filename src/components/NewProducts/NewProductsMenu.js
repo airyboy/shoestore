@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default function NewProductsMenu(props) {
     const changeActiveCategory = (e, id) => {
         e.preventDefault();

@@ -19,7 +19,10 @@ export default class ProductCard extends React.Component {
     constructor(props) {
         super(props)
 
+        const favoriteIds = Storage.getFavoriteIds()
+
         this.state = {
+            favoriteIds: favoriteIds,
             productId: this.props.match.params.id,
             product: null,
             categories: null,
@@ -144,54 +147,84 @@ export default class ProductCard extends React.Component {
         }
     }
 
+    handleFavoriteToggle = () => {
+        const id = this.state.product.id
+        let newFavs
+
+        if (this.state.favoriteIds.find(f => f === id)) {
+            newFavs = Storage.removeFromFavorites(id)
+        } else {
+            newFavs = Storage.addToFavorites(id)
+        }
+
+        this.setState({favoriteIds: newFavs}, () => console.log(this.state.favoriteIds))
+    }
+
     render() {
-	return (
-        <div>
-           <BreadCrumbs product={this.state.product} categories={this.state.categories} />
+        const InFavorite = (props) => (
+                <a href="#" className="in-favourites-wrapper" onClick={(e) => { e.preventDefault(); props.onToggle(); }}>
+                    <div className="favourite-chosen" href="#"></div>
+                    <p className="in-favourites">В избранном</p>
+                </a>
+        )
 
-            {this.state.product !== null &&
-            <main className="product-card">
-                <section className="product-card-content">
-                    <h2 className="section-name">{this.state.product.title}</h2>
-                    <section className="product-card-content__main-screen">	
-                        <PicsSlider images={this.state.product.images} />
-                        <MainPic image={this.state.product.images[0]} />
-        
-                        <div className="main-screen__product-info">
-                            <div className="product-info-title">
-                                <h2>{this.state.product.title}</h2>
+        const NotInFavorite = (props) => (
+            <a href="#" className="in-favourites-wrapper" onClick={(e) => { e.preventDefault(); props.onToggle(); }}>
+                <div className="favourite" href="#"></div>
+                <p className="in-favourites">В избранное</p>
+            </a>
+        ) 
 
-                                {this.state.product.sizes.some(size => size.available) &&
-                                    <div className="in-stock">В наличии</div>}
+        return (
+            <div>
+            <BreadCrumbs product={this.state.product} categories={this.state.categories} />
+
+                {this.state.product !== null &&
+                <main className="product-card">
+                    <section className="product-card-content">
+                        <h2 className="section-name">{this.state.product.title}</h2>
+                        <section className="product-card-content__main-screen">	
+                            <PicsSlider images={this.state.product.images} />
+                            <MainPic image={this.state.product.images[0]} />
+            
+                            <div className="main-screen__product-info">
+                                <div className="product-info-title">
+                                    <h2>{this.state.product.title}</h2>
+
+                                    {this.state.product.sizes.some(size => size.available) &&
+                                        <div className="in-stock">В наличии</div>}
+                                </div>
+                                
+                                <ProductFeatures product={this.state.product} />
+                                
+                                <p className="size">Размер</p>
+
+                                <Sizes sizes={this.state.product.sizes} chosenSize={this.state.chosenSize} onSizeChange={size => this.setState({chosenSize: size})} />
+                                <div className="size-wrapper">
+                                    <a href="#">
+                                        <span className="size-rule"></span>
+                                        <p className="size-table">Таблица размеров</p>
+                                    </a>
+                                </div>
+                                {this.state.favoriteIds.findIndex(a => a === this.state.product.id) > -1 ? 
+                                    <InFavorite onToggle={this.handleFavoriteToggle} /> : 
+                                    <NotInFavorite onToggle={this.handleFavoriteToggle} />}
+                                {/* <a href="#" className="in-favourites-wrapper">
+                                    <div className="favourite" href="#"></div>
+                                    <p className="in-favourites">В избранное</p>
+                                </a> */}
+                                <QuantitySelector quantity={this.state.quantity} onChangeQuantity={this.handleQuantityChange} />
+                                <div className="price">{this.state.product.price} ₽</div>
+                                <button className="in-basket in-basket-click" onClick={this.handleAddToBasketClick}>В корзину</button>
                             </div>
-                            
-                            <ProductFeatures product={this.state.product} />
-                            
-                            <p className="size">Размер</p>
+                        </section>
 
-                            <Sizes sizes={this.state.product.sizes} chosenSize={this.state.chosenSize} onSizeChange={size => this.setState({chosenSize: size})} />
-                            <div className="size-wrapper">
-                                <a href="#">
-                                    <span className="size-rule"></span>
-                                    <p className="size-table">Таблица размеров</p>
-                                </a>
-                            </div>
-                            <a href="#" className="in-favourites-wrapper">
-                                <div className="favourite" href="#"></div>
-                                <p className="in-favourites">В избранное</p>
-                            </a>
-                            <QuantitySelector quantity={this.state.quantity} onChangeQuantity={this.handleQuantityChange} />
-                            <div className="price">{this.state.product.price} ₽</div>
-                            <button className="in-basket in-basket-click" onClick={this.handleAddToBasketClick}>В корзину</button>
-                        </div>
+                        <Visited products={this.state.shownVisited} onMoveVisited={this.handleVisitedShifting} />
+
+                        <SimilarGoods products={this.state.shownSimilar} onMoveSimilar={this.handleSimilarsShifting} />
                     </section>
-
-                    <Visited products={this.state.shownVisited} onMoveVisited={this.handleVisitedShifting} />
-
-                    <SimilarGoods products={this.state.shownSimilar} onMoveSimilar={this.handleSimilarsShifting} />
-                </section>
-            </main>}
-        </div>
-    );
+                </main>}
+            </div>
+        )
 }
 }

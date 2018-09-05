@@ -2,7 +2,6 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 export default function Pager(props) {
-    console.log(props)
     if (+props.totalPages < 2) {
         return null;
     }

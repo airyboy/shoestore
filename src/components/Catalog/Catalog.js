@@ -8,6 +8,11 @@ import { width } from 'window-size';
 import Sidebar from './Sidebar';
 import Pager from "../Shared/Pager"
 import ItemCard from "../Shared/ItemCard"
+import { resetFilter } from "../../reset_filter"
+
+import { declensionOfNumber } from '../../utils'
+
+
 
 export default class Catalog extends React.Component {
     constructor(props) {
@@ -15,26 +20,40 @@ export default class Catalog extends React.Component {
         
         const favoriteIds = Storage.getFavoriteIds()
 
+        const categoryId = this.props.match.params.categoryId ? +this.props.match.params.categoryId : null
+        const page = this.props.match.params.page ? +this.props.match.params.page : 1
+
+        console.log(this.props.match)
+
         this.state = {
             favoriteIds: favoriteIds,
             categories: [],
-            numOfGoodsInCategory: 10,
+            numOfGoodsInCategory: null,
             currentCategory: null,
             products: [],
             totalPages: 1,
             filters: {
-                categoryId: +this.props.match.params.categoryId,
-                page: +this.props.match.params.page,
+                categoryId: categoryId,
+                page: page,
+                search: null,
                 type: null,
                 color: null,
                 size: null,
                 heelSize: null,
                 reason: null,
                 season: null,
-                minPrice: 100,
+                minPrice: 0,
                 maxPrice: 100000,
                 discounted: null,
                 sortBy: 'price'
+            }
+        }
+
+        if (this.props.match.params.filter) {
+            const filterFromUrl = this.decodeFilter(this.props.match.params.filter)
+
+            for(let key of Object.keys(filterFromUrl)) {
+                this.state.filters[key] = filterFromUrl[key]
             }
         }
     }
@@ -43,18 +62,31 @@ export default class Catalog extends React.Component {
         fetch('https://neto-api.herokuapp.com/bosa-noga/categories')        
         .then(resp => resp.json())
         .then(json => {
-            console.log(json)
-            this.setState(prevState => ({
+            this.setState({
                 categories: json.data, 
-                currentCategory: json.data.find(c => c.id === prevState.filters.categoryId)
-            }))
+                currentCategory: json.data.find(c => c.id === this.state.filters.categoryId)
+            })
         })
 
         this.fetchData()
     }
 
     componentDidUpdate(prevProps) {
+        console.log(this.props.match)
+        if (this.props.match.params.filter !== undefined && this.props.match.params.filter !== prevProps.match.params.filter) {
+            this.setState(prevState => {
+                const newFilters = this.decodeFilter(this.props.match.params.filter)
+                console.log('catalog', 'filter in url changed', 'filters', newFilters)
+                newFilters.page = parseInt(this.props.match.params.page)
+                
+
+                return { filters: newFilters, currentCategory: prevState.categories.find(c => c.id === +this.props.match.params.categoryId)}
+            }, () => this.fetchData())
+            return
+        }
+
         if (this.props.match.params.page !== prevProps.match.params.page) {
+            console.log('catalog', 'page in url changed')
             const newPage = +(this.props.match.params.page || 1)
             this.setState(prevState => {
                 const newFilters = Object.assign({}, prevState.filters)
@@ -65,6 +97,7 @@ export default class Catalog extends React.Component {
         }
 
         if (this.props.match.params.categoryId !== prevProps.match.params.categoryId) {
+            console.log('catalog', 'categoryId in url changed')
             const newPage = 1
             this.setState(prevState => {
                 const newFilters = Object.assign({}, prevState.filters)
@@ -76,27 +109,85 @@ export default class Catalog extends React.Component {
         }
     }
 
+    onResetFilter = () => {
+        this.props.history.push(`/catalog/filter/${this.encodeFilter(resetFilter)}/page/1`)
+    }
+
     onFilterChange = (key, val) => {
         this.setState(prevState => {
             const prevValue = prevState.filters[key]
 
             let newFilters = Object.assign({}, prevState.filters)
-            if (prevValue !== val) {
-                newFilters[key] = val
+
+            if (key == 'size' || key == 'heelSize') {
+                const sizeFilter = prevValue || ''
+                const splitted = sizeFilter.split(',').filter(a => a!== '').map(a => parseInt(a))
+                if (splitted.findIndex(a => a === val) > -1) {
+                    newFilters[key] = splitted.filter(a => a !== val).join(',')
+                } else {
+                    splitted.push(val)
+                    newFilters[key] = splitted.join(',')
+                }
+
             } else {
-                newFilters[key] = null
+                if (prevValue !== val) {
+                    newFilters[key] = val
+                } else {
+                    newFilters[key] = null
+                }
             }
 
+            newFilters.page = 1 
+
             return { filters: newFilters}
-        }, this.fetchData)
+        }, () => {
+            this.props.history.push(`/catalog/filter/${this.encodeFilter()}/page/${this.state.filters.page}`);
+        })
+    }
+
+    serializeSizes = (arr) => {
+        return arr.join(',')
+    }
+
+    deserializeSizes = (str) => {
+        const splitted = str.split(',').map(a => parseInt(a))
+
+        return 
+    }
+
+    encodeFilter = (filter) => {
+        const filterToHandle = filter === undefined ? this.state.filters : filter;
+
+        const copy = Object.assign({}, filterToHandle)
+        delete copy.page
+        const str = JSON.stringify(copy)
+        const base64 = btoa(encodeURIComponent(str))
+
+        return base64
+    }
+
+    decodeFilter = () => {
+        const str = atob(this.props.match.params.filter)
+        const filterFromUrl = JSON.parse( decodeURIComponent(str))
+
+        return filterFromUrl
     }
 
     fetchData = () => {
         const searchStringArr = []
         for (let key of Object.keys(this.state.filters)) {
             const val = this.state.filters[key]
-            if (val !== null) {
-                searchStringArr.push([key, val])
+            if (val !== null & val !== '') {
+                if (key === 'size' | key === 'heelSize') {
+                    const vals = val.split(',')
+                                    .filter(a => a !== '')
+                                    .forEach(a => {
+                                        searchStringArr.push([`${key}[]`, a])
+                    })
+                } else {
+                    searchStringArr.push([key, val])
+                }
+                
             }
         }
 
@@ -106,7 +197,6 @@ export default class Catalog extends React.Component {
         fetch(url)
         .then(resp => resp.json())
         .then(json => {
-            console.log(json)
             const products = json.data
 
             products.forEach((p, i) => {p.num = i + 1})
@@ -117,9 +207,6 @@ export default class Catalog extends React.Component {
                 totalPages: json.pages
             })
         })
-
-        console.log(url)
-
     }
 
     handleSorting = (e) => {
@@ -131,7 +218,7 @@ export default class Catalog extends React.Component {
             newFilters.page = 1
 
             return {filters: newFilters}
-        }, () => this.fetchData())
+        }, () => { this.props.history.push(`/catalog/filter/${this.encodeFilter()}/page/${this.state.filters.page}`)})
     }
 
     handleFavoriteToggle = (id) => {
@@ -160,12 +247,13 @@ export default class Catalog extends React.Component {
                     </ul>
                 </div>}
                 <main className="product-catalogue">
-                    <Sidebar filters={this.state.filters} onFilterChange={this.onFilterChange}/>
+                    <Sidebar filters={this.state.filters} onFilterChange={this.onFilterChange} onResetFilter={this.onResetFilter} />
                     <section className="product-catalogue-content">
                         {/* <!-- Голова каталога с названием раздела и сортировкой --> */}
                         <section className="product-catalogue__head">
                             <div className="product-catalogue__section-title">
-                                <h2 className="section-name">{this.state.currentCategory && this.state.currentCategory.title}</h2><span className="amount"> {this.state.numOfGoodsInCategory} товара</span>
+                                <h2 className="section-name">{this.state.currentCategory && this.state.currentCategory.title}</h2>
+                                <span className="amount"> {this.state.numOfGoodsInCategory} {declensionOfNumber(this.state.numOfGoodsInCategory, ['товар', 'товара', 'товаров']) }</span>
                             </div>
                             <div className="product-catalogue__sort-by">
                                 <p className="sort-by">Сортировать</p>
@@ -186,7 +274,7 @@ export default class Catalog extends React.Component {
                                     inFavorites={this.state.favoriteIds.findIndex(a => a === product.id) > -1} />) }
                         </section>
                         {/* <!-- Пагинация под каталогом --> */}
-                        <Pager to={`/catalog/${this.state.filters.categoryId}/page/`} currentPage={this.state.filters.page} totalPages={this.state.totalPages} />
+                        <Pager to={`/catalog/filter/${this.encodeFilter()}/page/`} currentPage={this.state.filters.page} totalPages={this.state.totalPages} />
                     </section>
                 </main>
             </div>)

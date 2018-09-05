@@ -7,6 +7,8 @@ import Storage from "../../storage";
 import ItemCard from '../Shared/ItemCard';
 import Pager from '../Shared/Pager';
 
+import { declensionOfNumber } from '../../utils'
+
 export default class Favorite extends React.Component {
     constructor(props) {
         super(props)
@@ -115,7 +117,7 @@ export default class Favorite extends React.Component {
                     <section className="product-catalogue__head product-catalogue__head_favorite">
                         <div className="product-catalogue__section-title">
                             <h2 className="section-name">В вашем избранном</h2>
-                            <span className="amount amount_favorite">{this.state.goods.length} товаров</span>
+                            <span className="amount amount_favorite">{this.state.goods.length} {declensionOfNumber(this.state.goods.length, ['товар', 'товара', 'товаров'])}</span>
                         </div>
                         <div className="product-catalogue__sort-by">
                             <p className="sort-by">Сортировать</p>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import Storage from "../storage.js";
+import Storage from "../../storage.js";
 
 import NewProductCard from "./NewProductCard"
 import NewProductInfo from "./NewProductInfo"

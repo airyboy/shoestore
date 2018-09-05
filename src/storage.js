@@ -13,7 +13,7 @@ export default class Storage {
     static addToFavorites(id) {
         const favs = Storage.getFavoriteIds()
 
-        if (!favs.find(a => a === id)) {
+        if (!favs.find(a => a === id) && id !== null) {
             favs.push(id)
         }
 

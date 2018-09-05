@@ -11,7 +11,7 @@ import "../css/style.css";
 import Header from './Header/Header';
 import Footer from './Footer/Footer';
 import Catalog from './Catalog/Catalog';
-import Sections from './Sections';
+import Sections from './Sections/Sections';
 import ProductPage from './ProductCard/ProductCard';
 import Favorite from './Favorite/Favorite';
 import Order from './Order/Order';
@@ -46,7 +46,6 @@ export default class MainPage extends React.Component {
             fetch(`https://neto-api.herokuapp.com/bosa-noga/cart/${Storage.getBasketId()}`)
             .then(resp => resp.json())
             .then(json => {
-                console.log('basket content', json)
                 products = json.data.products
 
                 return json.data.products
@@ -61,8 +60,6 @@ export default class MainPage extends React.Component {
                 return Promise.all(tasks)
             })
             .then(jsons => {
-                console.log('products', products)
-                console.log('jsons', jsons)
                 products.forEach(product => {
                     const found = jsons.find(a => a.id === product.id)
 
@@ -247,7 +244,12 @@ export default class MainPage extends React.Component {
                     <div>
                         <Switch>
                             <Route exact path="/" component={Sections} />
-                            <Route path="/catalog/:categoryId?/page/:page?" component={Catalog} />
+                            <Route path="/catalog/:categoryId(\d+)/page/:page(\d+)" component={Catalog} />
+                            <Route path="/catalog/:categoryId(\d+)" component={Catalog} />
+                            <Route path="/catalog/filter/:filter/page/:page" component={Catalog} />
+                            <Route path="/catalog/filter/:filter" component={Catalog} />
+                            <Route path="/catalog" exact component={Catalog} />
+                            <Route path="/catalog/search/:search" component={Catalog} />
                             <Route path="/productcard/:id" render={ProductCard} />
                             <Route path="/favourite/:page?" component={Favorite} />
                             <Route path="/order" render={OrderPage} />

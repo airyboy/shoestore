@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, withRouter } from 'react-router-dom';
 
 import TopMenu from './TopMenu';
 import ProfilePanel from './ProfilePanel';
@@ -7,13 +7,18 @@ import BasketPanel from './BasketPanel';
 
 import logo from "../../img/header-logo.png"
 
-export default class Header extends React.Component {
+import { encodeObject } from '../../utils'
+import { resetFilter } from "../../reset_filter"
+
+class Header extends React.Component {
     constructor(props) {
         super(props)
 
         this.state = {
             basketPanelVisible: false,
             profilePanelVisible: false,
+            searchFormVisible: false,
+            searchString: '',
             categories: []
         }
 
@@ -51,6 +56,25 @@ export default class Header extends React.Component {
         })
     }
 
+    toggleSearch = () => {
+        this.setState(prevState => {
+            return {
+                searchFormVisible: !prevState.searchFormVisible
+            }
+        })
+    }
+
+    
+    handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+
+            const searchFilter = Object.assign({}, resetFilter)
+            searchFilter.search = this.state.searchString
+            this.props.history.push(`/catalog/filter/${encodeObject(searchFilter)}/page/1`)
+        }
+    }
+
     render() {
         return (
             <header className="header">
@@ -72,7 +96,9 @@ export default class Header extends React.Component {
                         <div className="header-main__profile">
                             <div className="header-main__pics">
                                 {/* Search */}
-                                <div className="header-main__pic header-main__pic_search">
+                                <div 
+                                    className={'header-main__pic header-main__pic_search' + (this.state.searchFormVisible ? ' header-main__pic_search_is-hidden' : '')}
+                                    onClick={this.toggleSearch}>
                                 </div>
                                 <div className="header-main__pic_border"></div>
 
@@ -88,8 +114,8 @@ export default class Header extends React.Component {
                                     <div className={'header-main__pic_basket_menu'  + (this.state.basketPanelVisible ? ' header-main__pic_basket_menu_is-active' : '')}></div>
                                 </div>
                             </div>
-                            <form className="header-main__search" action="#">
-                                <input placeholder="Поиск" />
+                            <form className={'header-main__search' + (this.state.searchFormVisible ?  ' header-main__search_active' : '')} action="#">
+                                <input placeholder="Поиск" onKeyPress={this.handleKeyPress} onChange={e => this.setState({searchString: e.target.value})} />
                                 <i className="fa fa-search" aria-hidden="true"></i>
                             </form>
                         </div>
@@ -118,3 +144,5 @@ export default class Header extends React.Component {
         )
     }
 }
+
+export default withRouter(Header);
