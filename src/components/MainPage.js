@@ -39,7 +39,7 @@ export default class MainPage extends React.Component {
     }
 
     componentDidMount() {
-        //restore the basket contents if there is an active basket
+        //restore the basket's contents if there is an active basket
         let products
 
         if (Storage.getBasketId()) {
@@ -119,14 +119,12 @@ export default class MainPage extends React.Component {
     }
 
     onAddToBasket = (item) => {
-        console.log('add basket item', item)
-
         let updatedItem
 
         this.setState(prevState => {
             const items = [...prevState.basketItems]
 
-            const found = items.find(a => a.id === item.id & a.size == item.size)
+            const found = items.find(a => a.id === item.id & a.size === item.size)
 
             if (found) {
                 found.quantity += item.quantity
@@ -161,14 +159,12 @@ export default class MainPage extends React.Component {
     }
 
     onQuantityChange = (item, val) => {
-        console.log(item, val);
-
         let newQuantity
 
         this.setState(prevState => {
             let items = [...prevState.basketItems]
 
-            const index = items.findIndex(a => a.id === item.id & a.size == item.size)
+            const index = items.findIndex(a => a.id === item.id & a.size === item.size)
             items[index].quantity += val
             newQuantity = items[index].quantity
 
@@ -188,7 +184,6 @@ export default class MainPage extends React.Component {
     }
 
     onSubmitOrder = (details) => {
-        console.log(details)
         const paymentTypeKey = paymentMethods.find(a => a.val === details.paymentMethod).key
 
         const payload = {
@@ -204,7 +199,6 @@ export default class MainPage extends React.Component {
         fetch(`https://neto-api.herokuapp.com/bosa-noga/order`, requestParams)
         .then(resp => resp.json())
         .then(json => {
-            console.log('order created', json)
             if (json.status === 'ok') {
                 Storage.setBasketId(null)
             }

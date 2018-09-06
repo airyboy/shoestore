@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
 import './App.css';
 import MainPage from './MainPage.js';
+import { title } from '../title'
 
 export default class App extends Component {
-  render() {
-    return (
-    	<div>
-    		<MainPage/>
-    	</div>
-    );
-  }
+
+    componentDidMount() {
+        document.title = title + ' - Главная'
+    }
+
+    render() {
+        return (
+            <div>
+                <MainPage />
+            </div>
+        );
+    }
 }

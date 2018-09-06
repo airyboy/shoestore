@@ -14,6 +14,10 @@ import ProductFeatures from "./ProductFeatures"
 import Visited from "./Visited"
 import SimilarGoods from "./SimilarGoods"
 
+import { title } from "../../title"
+
+console.log(title)
+
 
 export default class ProductCard extends React.Component {
     constructor(props) {
@@ -52,6 +56,9 @@ export default class ProductCard extends React.Component {
         .then(resp => resp.json())
         .then(json => {
             this.setState({ product: json.data })
+            
+            document.title = title + ' - ' + json.data.title
+            
             return json.data
         })
         .then(prod => this.loadSimilar(prod));

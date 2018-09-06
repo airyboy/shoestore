@@ -9,6 +9,7 @@ import Sidebar from './Sidebar';
 import Pager from "../Shared/Pager"
 import ItemCard from "../Shared/ItemCard"
 import { resetFilter } from "../../reset_filter"
+import { title } from '../../title'
 
 import { declensionOfNumber } from '../../utils'
 
@@ -43,7 +44,7 @@ export default class Catalog extends React.Component {
                 reason: null,
                 season: null,
                 minPrice: 0,
-                maxPrice: 100000,
+                maxPrice: 50000,
                 discounted: null,
                 sortBy: 'price'
             }
@@ -59,12 +60,14 @@ export default class Catalog extends React.Component {
     }
 
     componentDidMount() {
+        document.title = title + ' - Каталог'
+
         fetch('https://neto-api.herokuapp.com/bosa-noga/categories')        
         .then(resp => resp.json())
         .then(json => {
             this.setState({
                 categories: json.data, 
-                currentCategory: json.data.find(c => c.id === this.state.filters.categoryId)
+                currentCategory: json.data.find(c => c.id === parseInt(this.state.filters.categoryId))
             })
         })
 
@@ -80,7 +83,9 @@ export default class Catalog extends React.Component {
                 newFilters.page = parseInt(this.props.match.params.page)
                 
 
-                return { filters: newFilters, currentCategory: prevState.categories.find(c => c.id === +this.props.match.params.categoryId)}
+                return { 
+                    filters: newFilters, 
+                    currentCategory: prevState.categories.find(c => c.id === parseInt(newFilters.categoryId))}
             }, () => this.fetchData())
             return
         }
@@ -98,11 +103,11 @@ export default class Catalog extends React.Component {
 
         if (this.props.match.params.categoryId !== prevProps.match.params.categoryId) {
             console.log('catalog', 'categoryId in url changed')
-            const newPage = 1
             this.setState(prevState => {
                 const newFilters = Object.assign({}, prevState.filters)
-                newFilters.page = newPage
+                newFilters.page = 1
                 newFilters.categoryId = this.props.match.params.categoryId
+                newFilters.search = null
 
                 return { filters: newFilters, currentCategory: prevState.categories.find(c => c.id === +this.props.match.params.categoryId)}
             }, () => this.fetchData())
@@ -252,8 +257,8 @@ export default class Catalog extends React.Component {
                         {/* <!-- Голова каталога с названием раздела и сортировкой --> */}
                         <section className="product-catalogue__head">
                             <div className="product-catalogue__section-title">
-                                <h2 className="section-name">{this.state.currentCategory && this.state.currentCategory.title}</h2>
-                                <span className="amount"> {this.state.numOfGoodsInCategory} {declensionOfNumber(this.state.numOfGoodsInCategory, ['товар', 'товара', 'товаров']) }</span>
+                                <h2 className="section-name">{(this.state.currentCategory && this.state.currentCategory.title) || 'все товары'}</h2>
+                                <span className="amount"> {this.state.numOfGoodsInCategory} {declensionOfNumber(this.state.numOfGoodsInCategory, ['товар', 'товара', 'товаров'])}</span>
                             </div>
                             <div className="product-catalogue__sort-by">
                                 <p className="sort-by">Сортировать</p>

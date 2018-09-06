@@ -1,19 +1,3 @@
-export function shiftLeft(arr) {
-    const copy = [...arr]
-    const first = copy.shift()
-    copy.push(first)
-
-    return copy
-}
-
-export function shiftRight(arr) {
-    const copy = [...arr]
-    const last = copy.pop()
-    copy.unshift(last)
-
-    return copy
-}
-
 export function shiftBy(arr, step) {
     const copy = [...arr]
 
@@ -32,6 +16,8 @@ export function shiftBy(arr, step) {
     return copy
 }
 
+//agreement of a number and a Russian noun
+// usage: declensionOfNumber(2, ['штука', 'штуки', 'штук']])
 export function declensionOfNumber(n, titles) {  
     return titles[(n%10 == 1 && n%100 !== 11 ? 0 : n%10 >= 2 && n%10 <= 4 && (n%100 <10 || n%100 >= 20) ? 1 : 2)];
 }

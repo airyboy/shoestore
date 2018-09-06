@@ -16,9 +16,13 @@ export default class OrderDetailsForm extends React.Component {
     }
 
     onSubmitOrder = (history) => {
-        const details = Object.assign({}, this.state)
-        this.props.onSubmitOrder(details)
-        history.push('/orderdone')
+        if (this.state.phoneNumber.length > 0 & this.state.customerName.length > 0 & this.state.customerAddress.length > 0) {
+            const details = Object.assign({}, this.state)
+            this.props.onSubmitOrder(details)
+            history.push('/orderdone')
+        } else {
+            alert('Заполните все поля')
+        }
     }
 
     render() {

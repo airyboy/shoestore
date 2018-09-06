@@ -29,7 +29,7 @@ export default function NewProductCard(props) {
                 
                 {props.type === 'active' && 
                     <div className={props.isFavorite ? 'new-deals__product_favorite_chosen' : 'new-deals__product_favorite'} 
-                    onClick={e => handleFavoriteClick(e)}></div>}
+                    onClick={handleFavoriteClick}></div>}
             </div>        
         </NavLink>
     )

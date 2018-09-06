@@ -20,7 +20,6 @@ export default class Storage {
         localStorage.setItem('favorites', JSON.stringify(favs))
 
         return Storage.getFavoriteIds()
-
     }
 
     static removeFromFavorites(id) {
@@ -74,11 +73,7 @@ export default class Storage {
             localStorage.setItem('basketId', basketId)
         } else {
             localStorage.removeItem('basketId')
-        }
-
-        
+        }   
     }
-
-
 }
 

@@ -7,6 +7,8 @@ import Storage from "../../storage";
 import ItemCard from '../Shared/ItemCard';
 import Pager from '../Shared/Pager';
 
+import { title } from '../../title'
+
 import { declensionOfNumber } from '../../utils'
 
 export default class Favorite extends React.Component {
@@ -39,6 +41,8 @@ export default class Favorite extends React.Component {
     }
 
     componentDidMount() {
+        document.title = title + ' - Избранное'
+
         const tasks = this.state.favoriteIds
             .map(id => fetch(`https://neto-api.herokuapp.com/bosa-noga/products/${id}`)
             .then(resp => resp.json()));

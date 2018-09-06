@@ -1,12 +1,7 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
-
-import { FilterOptions, types } from "../../catalog_filter_options"
 
 import SidebarSection from "./SidebarSection"
 import PriceSlider from "./PriceSlider"
-
-const filterOptions = new FilterOptions()
 
 export default class Sidebar extends React.Component {
     constructor(props) {
@@ -29,8 +24,6 @@ export default class Sidebar extends React.Component {
         fetch('https://neto-api.herokuapp.com/bosa-noga/filters')        
         .then(resp => resp.json())
         .then(json => {
-            console.log(json)
-
             const colors = json.data.color.sort()
             const brands = json.data.brand.sort()
 
@@ -83,26 +76,16 @@ export default class Sidebar extends React.Component {
                 </ul>
             </SidebarSection>
             <div className="separator-150 separator-150-1"></div>
-            <SidebarSection title="Цена" classSuffix="price">
-                <div className="price-slider">
-                    <div className="circle-container">
-                        <div className="circle-1"></div>
-                        <div className="line-white"></div>
-                        <div className="line-colored"></div>
-                        <div className="circle-2"></div>
-                    </div>
-                    <div className="counter">
-                        <input type="text" className="input-1" value={this.props.filters.minPrice} onChange={(e) => this.props.onFilterChange('minPrice', e.target.value)} />
-                        <div className="input-separator"></div>
-                        <input type="text" className="input-2" value={this.props.filters.maxPrice} onChange={(e) => this.props.onFilterChange('maxPrice', e.target.value)} />
-                    </div>
-                </div>
-            </SidebarSection>
-            {/* <SidebarSection title="Цена" classSuffix="price">
-                <PriceSlider minPrice={this.props.filters.minPrice} maxPrice={this.props.filters.maxPrice} />
-            </SidebarSection>             */}
+            <SidebarSection title="Цена" classSuffix="price" collapsed={false}>
+                <PriceSlider 
+                    minPrice={this.props.filters.minPrice} 
+                    maxPrice={this.props.filters.maxPrice} 
+                    onRangeChange={(key, val) => this.props.onFilterChange(key, val)} 
+                    maxValue={100000} 
+                    step={1000} />
+            </SidebarSection>            
             <div className="separator-150 separator-150-2"></div>
-            <SidebarSection title="Цвет" classSuffix="color">
+            <SidebarSection title="Цвет" classSuffix="color" collapsed={false}>
                 <ul>
                     {this.state.colors.map(opt => 
                         <li key={opt} className={opt === this.props.filters.color ? 'active' : ''} onClick={() => this.props.onFilterChange('color', opt)}>
@@ -201,9 +184,10 @@ export default class Sidebar extends React.Component {
                     </ul>
                 </div>
 
-
-
-                <label><input type="checkbox" className="checkbox" name="checkbox-disc" /><span className="checkbox-discount"></span> <span className="text-discount">Со скидкой</span></label>                         
+                <label><input type="checkbox" className="checkbox" name="checkbox-disc" checked={this.props.filters.discounted}
+                    onChange={(e) => this.props.onFilterChange('discounted', e.target.checked || null)} />
+                <span className="checkbox-discount"></span> 
+                <span className="text-discount">Со скидкой</span></label>                         
 
                 <div className="separator-240"></div>
             </section>

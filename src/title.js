@@ -1,0 +1,1 @@
+export const title = "Bosa Noga - Магазин обуви"
