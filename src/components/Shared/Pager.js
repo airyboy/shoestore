@@ -35,10 +35,19 @@ export default function Pager(props) {
         pageNums.push(props.totalPages)
     }
 
+    const PrevPage = () => (
+        <div className="angle-back"><NavLink to={props.to + (props.currentPage - 1)}></NavLink></div>
+    )
+
+    const NextPage = () => (
+        <div className="angle-forward"><NavLink to={props.to + (props.currentPage + 1)}></NavLink> </div>
+    )
+
     return (
             <div className="product-catalogue__pagination">
                 <div className="page-nav-wrapper">
-                <div className="angle-back"><a href="#"></a></div>
+                {props.currentPage !== 1 && <PrevPage />}
+                {/* <div className="angle-back"><a href="#"></a></div> */}
                 <ul>
                     {pageNums.map(p => 
                         <li key={p !== null ? p : Math.random(props.totalPages + 1, 10000)} 
@@ -50,7 +59,7 @@ export default function Pager(props) {
 
                         </li>)}
                 </ul>
-                <div className="angle-forward"><a href="#"></a></div>
+                {props.currentPage !== props.totalPages && <NextPage />}
                 </div>
             </div>
     )

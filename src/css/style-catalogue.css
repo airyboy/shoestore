@@ -446,7 +446,8 @@ span.producer {
 
 .sidebar li.active {
   display: inline-block;
-  padding: 5px;
+  margin-top: 9px;
+  padding: 3px 3px 3px 19px;
   background: #D4D4D4;
   border-radius: 7px;
   color: #000000;

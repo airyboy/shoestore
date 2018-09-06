@@ -11,7 +11,7 @@ export default function ProductFeatures(props) {
             </tr>
                 <tr>
                 <td className="left-col">Производитель:</td>
-                <td className="right-col"><a href="#"><span className="producer">{props.product.brand}</span></a></td>
+                <td className="right-col"><span className="producer">{props.product.brand}</span></td>
             </tr>
                 <tr>
                 <td className="left-col">Цвет:</td>

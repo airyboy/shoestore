@@ -74,6 +74,7 @@ export default class ProductCard extends React.Component {
                     visited: modifiedVisited,
                     shownVisited: modifiedVisited.slice(0, 5),
                     productId: this.props.match.params.id,
+                    chosenSize: null,
                     quantity: 1
                 } 
             })
@@ -222,7 +223,7 @@ export default class ProductCard extends React.Component {
                                 </a> */}
                                 <QuantitySelector quantity={this.state.quantity} onChangeQuantity={this.handleQuantityChange} />
                                 <div className="price">{this.state.product.price} ₽</div>
-                                <button className="in-basket in-basket-click" onClick={this.handleAddToBasketClick}>В корзину</button>
+                                <button className="in-basket in-basket-click" style={{ opacity: this.state.chosenSize ? 1 : 0.3}} onClick={this.handleAddToBasketClick}>В корзину</button>
                             </div>
                         </section>
 
