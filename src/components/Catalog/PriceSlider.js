@@ -20,8 +20,8 @@ export default class PriceSlider extends React.Component {
 
     componentDidMount() {
         const width = this.line.current.getBoundingClientRect().width //total width of the slider
-        const xLeft = this.priceToOffset(this.props.minPrice) //(width / this.props.maxValue) * this.props.minPrice
-        const xRight = this.priceToOffset(this.props.maxPrice) //(width / this.props.maxValue) * this.props.maxPrice
+        const xLeft = this.priceToOffset(this.props.minPrice) 
+        const xRight = this.priceToOffset(this.props.maxPrice) 
 
         this.setState({
             totalWidth: width,

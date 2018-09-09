@@ -150,16 +150,6 @@ export default class Catalog extends React.Component {
         })
     }
 
-    serializeSizes = (arr) => {
-        return arr.join(',')
-    }
-
-    deserializeSizes = (str) => {
-        const splitted = str.split(',').map(a => parseInt(a))
-
-        return 
-    }
-
     encodeFilter = (filter) => {
         const filterToHandle = filter === undefined ? this.state.filters : filter;
 
@@ -241,23 +231,50 @@ export default class Catalog extends React.Component {
         this.setState({favoriteIds: newFavs}, () => console.log(this.state.favoriteIds))
     }
 
+    getHeader = () => {
+        if (this.state.filters.search) {
+            return 'результаты поиска';
+        }
+
+        if (this.state.currentCategory) {
+            return this.state.currentCategory.title;
+        } else {
+            return 'все товары';
+        }
+    }
+
+    getCurrentBreadCrumb = () => {
+        if (this.state.filters.search) {
+            return {title: 'Результаты поиска', url: this.props.location};
+        }
+
+        if (this.state.currentCategory) {
+            return {title: this.state.currentCategory.title, url: `/catalog/${this.state.currentCategory.id}/page/1`};
+        } else {
+            return {title: 'Все товары', url: this.props.location};
+        }
+    }
+
     render() {
         return (
             <div>
-                {this.state.currentCategory &&
                 <div className="site-path">
                     <ul className="site-path__items">
-                        <li className="site-path__item"><NavLink to="/">Главная</NavLink></li>
-                        <li className="site-path__item"><NavLink to={`/catalog/${this.state.currentCategory.id}/page/1`}>{this.state.currentCategory.title}</NavLink></li>
+                        <li className="site-path__item">
+                            <NavLink to="/">Главная</NavLink>
+                        </li>
+                        <li className="site-path__item">
+                            <NavLink to={this.getCurrentBreadCrumb().url}>{this.getCurrentBreadCrumb().title}</NavLink>
+                        </li>
                     </ul>
-                </div>}
+                </div>
                 <main className="product-catalogue">
                     <Sidebar filters={this.state.filters} onFilterChange={this.onFilterChange} onResetFilter={this.onResetFilter} />
                     <section className="product-catalogue-content">
                         {/* <!-- Голова каталога с названием раздела и сортировкой --> */}
                         <section className="product-catalogue__head">
                             <div className="product-catalogue__section-title">
-                                <h2 className="section-name">{(this.state.currentCategory && this.state.currentCategory.title) || 'все товары'}</h2>
+                                <h2 className="section-name">{this.getHeader()}</h2>
                                 <span className="amount"> {this.state.numOfGoodsInCategory} {declensionOfNumber(this.state.numOfGoodsInCategory, ['товар', 'товара', 'товаров'])}</span>
                             </div>
                             <div className="product-catalogue__sort-by">
