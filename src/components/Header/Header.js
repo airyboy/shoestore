@@ -9,6 +9,7 @@ import logo from "../../img/header-logo.png"
 
 import { encodeObject } from '../../utils'
 import { resetFilter } from "../../reset_filter"
+import QuickFiltersMenu from './QuickFiltersMenu';
 
 class Header extends React.Component {
     constructor(props) {
@@ -19,7 +20,9 @@ class Header extends React.Component {
             profilePanelVisible: false,
             searchFormVisible: false,
             searchString: '',
-            categories: []
+            categories: [],
+            currentCategoryId: null,
+            quickFiltersShown: false
         }
 
         this.showProfile = this.showProfile.bind(this)
@@ -73,6 +76,17 @@ class Header extends React.Component {
             searchFilter.search = this.state.searchString
             this.props.history.push(`/catalog/filter/${encodeObject(searchFilter)}/page/1`)
         }
+    }
+
+    handleCategoryMenuClick = (categoryId) => {
+        this.setState(prevState => {
+
+            return {
+                quickFiltersShown: !prevState.quickFiltersShown,
+                currentCategoryId: categoryId
+            }
+        });
+
     }
 
     render() {
@@ -134,11 +148,17 @@ class Header extends React.Component {
                     <div className="wrapper">
                         <ul className="main-menu__items">
                             {this.state.categories && this.state.categories.map(category => 
-                                <li key={category.id} className="main-menu__item main-menu__item_sales"><NavLink to={`/catalog/${category.id}/page/1`}>{category.title}</NavLink></li>
+                                <li key={category.id} 
+                                    onClick={() => this.handleCategoryMenuClick(category.id)}
+                                    className={'main-menu__item' + (category.id === this.state.currentCategoryId ? ' main-menu__item_active' : '')}>
+                                    <a>{category.title}</a>
+                                    {/* <NavLink to={`/catalog/${category.id}/page/1`}></NavLink> */}
+                                </li>
                             )}
                         </ul>
                     </div>
                 </nav>
+                <QuickFiltersMenu categoryId={this.state.currentCategoryId} visible={this.state.quickFiltersShown} onHidePanel={() => this.setState({quickFiltersShown: false})}/>
             </header>
 
         )

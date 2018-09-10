@@ -68,10 +68,21 @@ export default class Catalog extends React.Component {
             this.setState({
                 categories: json.data, 
                 currentCategory: json.data.find(c => c.id === parseInt(this.state.filters.categoryId))
-            })
-        })
+            });
+        });
 
-        this.fetchData()
+        this.fetchData();
+    }
+
+    scrollCurrentFiltersIntoView = () => {
+        ['.sidebar__color', '.sidebar__brand ul', '.sidebar__catalogue-list'].forEach(selector => {
+            const element = document.querySelector(`${selector} .active`);
+            if (element && element.offsetParent === null) {
+                const offsetTop = element.offsetTop;
+                const parentTop = element.parentElement.getBoundingClientRect().top;
+                element.parentElement.scrollTop = offsetTop - parentTop - 5;
+            }
+        })
     }
 
     componentDidUpdate(prevProps) {
@@ -86,7 +97,12 @@ export default class Catalog extends React.Component {
                 return { 
                     filters: newFilters, 
                     currentCategory: prevState.categories.find(c => c.id === parseInt(newFilters.categoryId))}
-            }, () => this.fetchData())
+            }, () => { 
+                this.fetchData();
+                
+                setTimeout(() => this.scrollCurrentFiltersIntoView(), 500);
+
+            })
             return
         }
 
@@ -200,8 +216,9 @@ export default class Catalog extends React.Component {
                 products: json.data, 
                 numOfGoodsInCategory: json.goods,
                 totalPages: json.pages
-            })
+            }, () => setTimeout(() => this.scrollCurrentFiltersIntoView(), 500))
         })
+
     }
 
     handleSorting = (e) => {

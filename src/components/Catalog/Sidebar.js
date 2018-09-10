@@ -81,8 +81,8 @@ export default class Sidebar extends React.Component {
                     minPrice={this.props.filters.minPrice} 
                     maxPrice={this.props.filters.maxPrice} 
                     onRangeChange={(key, val) => this.props.onFilterChange(key, val)} 
-                    maxValue={100000} 
-                    step={1000} />
+                    maxValue={60000} 
+                    step={500} />
             </SidebarSection>            
             <div className="separator-150 separator-150-2"></div>
             <SidebarSection title="Цвет" classSuffix="color" collapsed={false}>
