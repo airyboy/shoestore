@@ -79,7 +79,7 @@ export default class PriceSlider extends React.Component {
     }
 
     handleContainerClick = (e) => {
-        if (e.target == this.leftCircle.current | e.target == this.rightCircle.current) return;
+        if (e.target === this.leftCircle.current | e.target === this.rightCircle.current) return;
 
         const mX = e.clientX //mouseX
         const leftRect = this.leftCircle.current.getBoundingClientRect() //left circle boundaries
@@ -122,8 +122,11 @@ export default class PriceSlider extends React.Component {
         }
     }
 
-    handleMouseDown = (which) => {
-        this.setState({circleDrag: which})
+    handleMouseDown = (e, which) => {
+        //only LMB
+        if (e.button === 0) {
+            this.setState({circleDrag: which})
+        }
     }
 
     handleMouseMove = (e) => {
@@ -136,7 +139,12 @@ export default class PriceSlider extends React.Component {
                 const rightmostX = this.rightCircle.current.getBoundingClientRect().left - containerLeft;
                 let newLeft = relativeX > 0 ? relativeX : 0;
                 newLeft = newLeft < rightmostX ? newLeft : rightmostX;
-                this.setState({leftCircleLeft: newLeft })
+                this.setState(prevState => (
+                    {
+                        leftCircleLeft: newLeft - 12.5, 
+                        coloredLineWidth: prevState.rightCircleLeft - newLeft,
+                        coloredLineLeft: newLeft
+                    }))
             }
 
             if (this.state.circleDrag === 'right') {
@@ -146,8 +154,11 @@ export default class PriceSlider extends React.Component {
 
                 let newLeft = relativeX < rightmostX ? relativeX : rightmostX;
                 newLeft = newLeft > leftmostX ? newLeft : leftmostX;
-                console.log('newLeft', newLeft)
-                this.setState({rightCircleLeft: newLeft })
+
+                this.setState(prevState => ({
+                    rightCircleLeft: newLeft - 12.5,
+                    coloredLineWidth: newLeft - prevState.leftCircleLeft 
+                }))
             }
         }
     }
@@ -175,13 +186,13 @@ export default class PriceSlider extends React.Component {
             <div className="price-slider">
                 <div className="circle-container" ref={this.container} onClick={this.handleContainerClick}>
                     <div className="circle-1" style={{left: this.state.leftCircleLeft}} 
-                        onMouseDown={() => this.handleMouseDown('left')}  
+                        onMouseDown={(e) => this.handleMouseDown(e, 'left')}  
                         ref={this.leftCircle}></div>
                     <div className="line-white" ref={this.line}></div>
                     <div className="line-colored" style={{ width: this.state.coloredLineWidth, left: this.state.coloredLineLeft }} ref={this.coloredLine}></div>
                     <div className="circle-2" 
                         style={{left: this.state.rightCircleLeft}} 
-                        onMouseDown={() => this.handleMouseDown('right')} 
+                        onMouseDown={(e) => this.handleMouseDown(e, 'right')} 
                         ref={this.rightCircle}></div>
                 </div>
                 <div className="counter">

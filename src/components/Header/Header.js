@@ -80,9 +80,11 @@ class Header extends React.Component {
 
     handleCategoryMenuClick = (categoryId) => {
         this.setState(prevState => {
+            const shown = prevState.currentCategoryId !== categoryId ? true : !prevState.quickFiltersShown;
+            console.log(prevState.currentCategoryId, categoryId, shown)
 
             return {
-                quickFiltersShown: !prevState.quickFiltersShown,
+                quickFiltersShown: shown,
                 currentCategoryId: categoryId
             }
         });
@@ -158,7 +160,10 @@ class Header extends React.Component {
                         </ul>
                     </div>
                 </nav>
-                <QuickFiltersMenu categoryId={this.state.currentCategoryId} visible={this.state.quickFiltersShown} onHidePanel={() => this.setState({quickFiltersShown: false})}/>
+                <QuickFiltersMenu 
+                    categoryId={this.state.currentCategoryId} 
+                    visible={this.state.quickFiltersShown} 
+                    onHidePanel={() => this.setState({quickFiltersShown: false})}/>
             </header>
 
         )

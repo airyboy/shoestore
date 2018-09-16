@@ -5,7 +5,7 @@ import { encodeObject } from "../../utils"
 export default function BreadCrumbs(props) {
     if (!props.product | !props.categories) return null;
 
-    const category = props.categories.find(c => c.id == props.product.categoryId)
+    const category = props.categories.find(c => c.id === props.product.categoryId)
 
     const typeFilter = encodeObject({ type: props.product.type })
 

@@ -145,7 +145,7 @@ export default class MainPage extends React.Component {
         this.setState(prevState => {
             const items = [...prevState.basketItems]
 
-            const i = items.findIndex(item => item.id === id & item.size === size)
+            const i = items.findIndex(item => item.id === id  & item.size === size)
             items.splice(i, 1)
 
             return { basketItems: items }

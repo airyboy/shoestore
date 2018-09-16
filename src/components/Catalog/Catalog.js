@@ -140,7 +140,7 @@ export default class Catalog extends React.Component {
 
             let newFilters = Object.assign({}, prevState.filters)
 
-            if (key == 'size' || key == 'heelSize') {
+            if (key === 'size' || key === 'heelSize') {
                 const sizeFilter = prevValue || ''
                 const splitted = sizeFilter.split(',').filter(a => a!== '').map(a => parseInt(a))
                 if (splitted.findIndex(a => a === val) > -1) {

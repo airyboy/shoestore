@@ -3,7 +3,6 @@ import React from 'react';
 import '../../css/style-order.css';
 import '../../css/style-product-card.css';
 import Storage from "../../storage";
-import { NavLink } from 'react-router-dom';
 import { shiftBy } from "../../utils"
 import MainPic from "./MainPic"
 import PicsSlider from "./PicsSlider"
@@ -15,9 +14,6 @@ import Visited from "./Visited"
 import SimilarGoods from "./SimilarGoods"
 
 import { title } from "../../title"
-
-console.log(title)
-
 
 export default class ProductCard extends React.Component {
     constructor(props) {
@@ -165,7 +161,7 @@ export default class ProductCard extends React.Component {
             newFavs = Storage.addToFavorites(id)
         }
 
-        this.setState({favoriteIds: newFavs}, () => console.log(this.state.favoriteIds))
+        this.setState({favoriteIds: newFavs})
     }
 
     render() {
