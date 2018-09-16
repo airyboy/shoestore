@@ -35,6 +35,8 @@ export default class PriceSlider extends React.Component {
             coloredLineWidth: xRight - xLeft
         })
 
+        this.halfCircleWidth = this.leftCircle.current.getBoundingClientRect().width / 2
+
         this.leftCircle.current.ondragstart = () => { return false; }
         this.rightCircle.current.ondragstart = () => { return false; }
 
@@ -85,8 +87,8 @@ export default class PriceSlider extends React.Component {
         const leftRect = this.leftCircle.current.getBoundingClientRect() //left circle boundaries
         const rightRect = this.rightCircle.current.getBoundingClientRect() //right circle boundaries
 
-        const lX = leftRect.left 
-        const rX = rightRect.left + rightRect.width
+        const lX = leftRect.left + this.halfCircleWidth
+        const rX = rightRect.left + rightRect.width - this.halfCircleWidth
 
         const distLR = rightRect.left - (leftRect.left + leftRect.width) //distance between the circles
         const center = leftRect.left + leftRect.width + distLR / 2 //middle point
@@ -136,27 +138,26 @@ export default class PriceSlider extends React.Component {
 
             if (this.state.circleDrag === 'left') {
 
-                const rightmostX = this.rightCircle.current.getBoundingClientRect().left - containerLeft;
-                let newLeft = relativeX > 0 ? relativeX : 0;
+                const rightmostX = this.rightCircle.current.getBoundingClientRect().left - containerLeft + this.halfCircleWidth;
+                let newLeft = relativeX > this.halfCircleWidth ? relativeX : this.halfCircleWidth;
                 newLeft = newLeft < rightmostX ? newLeft : rightmostX;
                 this.setState(prevState => (
                     {
-                        leftCircleLeft: newLeft - 12.5, 
+                        leftCircleLeft: newLeft - this.halfCircleWidth, 
                         coloredLineWidth: prevState.rightCircleLeft - newLeft,
                         coloredLineLeft: newLeft
                     }))
             }
 
             if (this.state.circleDrag === 'right') {
-                const rightmostX = this.container.current.getBoundingClientRect().width - this.rightCircle.current.getBoundingClientRect().width;
+                const rightmostX = this.container.current.getBoundingClientRect().width - this.halfCircleWidth;
                 const leftCircleRect = this.leftCircle.current.getBoundingClientRect();
-                const leftmostX = leftCircleRect.left - containerLeft;
+                const leftmostX = leftCircleRect.left - containerLeft + this.halfCircleWidth;
 
                 let newLeft = relativeX < rightmostX ? relativeX : rightmostX;
                 newLeft = newLeft > leftmostX ? newLeft : leftmostX;
-
                 this.setState(prevState => ({
-                    rightCircleLeft: newLeft - 12.5,
+                    rightCircleLeft: newLeft - this.halfCircleWidth,
                     coloredLineWidth: newLeft - prevState.leftCircleLeft 
                 }))
             }
@@ -167,10 +168,10 @@ export default class PriceSlider extends React.Component {
         const pxPerStep = (this.state.totalWidth / (this.props.maxValue / this.props.step)); //rub in 1 px
         if (this.state.circleDrag === 'left') {
             const newMinPrice = this.props.step * Math.ceil(this.state.leftCircleLeft / pxPerStep)
-            this.props.onRangeChange('minPrice', newMinPrice)
+            this.props.onRangeChange('minPrice', newMinPrice > 0 ? newMinPrice : 0)
         } else if (this.state.circleDrag === 'right') {
             const newMaxPrice = this.props.step * Math.ceil(this.state.rightCircleLeft / pxPerStep)
-            this.props.onRangeChange('maxPrice', newMaxPrice)
+            this.props.onRangeChange('maxPrice', newMaxPrice > this.props.maxValue ? this.props.maxValue : newMaxPrice)
         }
 
         this.setState({circleDrag: null})
@@ -178,7 +179,7 @@ export default class PriceSlider extends React.Component {
 
     componentWillUnmount() {
         document.removeEventListener('mouseup', this.handleMouseUp)
-        document.addEventListener('mouseup', this.handleMouseUp)
+        document.removeEventListener('mousemove', this.handleMouseMove)
     }
 
     render() {

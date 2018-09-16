@@ -154,7 +154,10 @@ export default class Catalog extends React.Component {
                 if (prevValue !== val) {
                     newFilters[key] = val
                 } else {
-                    newFilters[key] = null
+                    //repeated click on filter turns it off but not for price
+                    if (key !== 'maxPrice' & key !== 'minPrice') {
+                        newFilters[key] = null
+                    }
                 }
             }
 
