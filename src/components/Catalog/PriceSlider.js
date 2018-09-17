@@ -38,7 +38,10 @@ export default class PriceSlider extends React.Component {
         this.halfCircleWidth = this.leftCircle.current.getBoundingClientRect().width / 2
 
         this.leftCircle.current.ondragstart = () => { return false; }
+        this.leftCircle.current.onselectstart = () => { return false; }
+
         this.rightCircle.current.ondragstart = () => { return false; }
+        this.rightCircle.current.onselectstart = () => { return false; }
 
         document.addEventListener('mousemove', this.handleMouseMove)
         document.addEventListener('mouseup', this.handleMouseUp)
@@ -131,6 +134,11 @@ export default class PriceSlider extends React.Component {
         }
     }
 
+    onSelectHandler = () => {
+        console.log('select start')
+        return false
+    }
+
     handleMouseMove = (e) => {
         if (this.state.circleDrag) {
             const containerLeft = this.container.current.getBoundingClientRect().left;
@@ -168,13 +176,20 @@ export default class PriceSlider extends React.Component {
         const pxPerStep = (this.state.totalWidth / (this.props.maxValue / this.props.step)); //rub in 1 px
         if (this.state.circleDrag === 'left') {
             const newMinPrice = this.props.step * Math.ceil(this.state.leftCircleLeft / pxPerStep)
-            this.props.onRangeChange('minPrice', newMinPrice > 0 ? newMinPrice : 0)
+            
+            let newMinPriceRestricted = newMinPrice > 0 ? newMinPrice : 0
+            newMinPriceRestricted = newMinPrice <= this.props.maxPrice ? newMinPriceRestricted : this.props.maxPrice
+
+            this.props.onRangeChange('minPrice', newMinPriceRestricted)
         } else if (this.state.circleDrag === 'right') {
             const newMaxPrice = this.props.step * Math.ceil(this.state.rightCircleLeft / pxPerStep)
-            this.props.onRangeChange('maxPrice', newMaxPrice > this.props.maxValue ? this.props.maxValue : newMaxPrice)
+
+            let newMaxPriceRestricted = newMaxPrice > this.props.maxValue ? this.props.maxValue : newMaxPrice
+            newMaxPriceRestricted = newMaxPriceRestricted >= this.props.minPrice ? newMaxPriceRestricted : this.props.minPrice
+            this.props.onRangeChange('maxPrice', newMaxPriceRestricted)
         }
 
-        this.setState({circleDrag: null})
+        this.setState({circleDrag: null})    
     }
 
     componentWillUnmount() {
@@ -185,7 +200,7 @@ export default class PriceSlider extends React.Component {
     render() {
         return (
             <div className="price-slider">
-                <div className="circle-container" ref={this.container} onClick={this.handleContainerClick}>
+                <div className="circle-container" ref={this.container} onMouseDown={this.handleContainerClick}>
                     <div className="circle-1" style={{left: this.state.leftCircleLeft}} 
                         onMouseDown={(e) => this.handleMouseDown(e, 'left')}  
                         ref={this.leftCircle}></div>
